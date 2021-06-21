@@ -1,0 +1,286 @@
+<html>
+
+<head>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+</head>
+<style type="text/css">
+    html,
+    body {
+        padding: 0;
+        margin: 0;
+
+
+        box-sizing: border-box;
+        -webkit-font-smoothing: subpixel-antialiased;
+
+        background: url('image/house1.jpg');
+        background-repeat: no-repeat;
+        background-size: 100% 100%;
+        background-position: cover;
+        max-height: 100vh;
+
+        max-width: 100vw;
+
+    }
+
+    #contai {
+        margin: 0 auto;
+        height: 100vh;
+        width: 100vw;
+    }
+
+
+
+    .right {
+        margin-top: 10px;
+
+        display: flex;
+        flex-direction: column;
+
+    }
+
+    .head {
+        width: 100vw;
+        height: 22vh;
+    }
+
+    #web {
+        flex: 1;
+        display: flex;
+        flex-direction: row;
+        padding-left: 38px;
+
+    }
+
+    .status {
+        padding-left: 10px;
+
+
+    }
+
+    .control {
+        flex: 1;
+        display: flex;
+        justify-content: center;
+    }
+
+    .room {
+
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+
+        align-items: center;
+        opacity: 0.8;
+
+    }
+
+    .room:hover {
+        opacity: 1.0;
+        cursor: pointer;
+
+
+    }
+
+    .room::selection {
+        opacity: 1.0;
+    }
+
+    .room:hover p {
+        font-size: 30px;
+        font-weight: bold;
+        color: rgb(48, 243, 9);
+        text-shadow: 5px 3px 5px black, 0 0 1em blue, 0 0 0.2em darkblue;
+    }
+
+    .info {
+        display: flex;
+        flex-direction: column;
+
+        align-items: center;
+
+    }
+
+    #esp {
+        width: 150px;
+        height: 100px;
+        box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+    }
+
+    .in {
+        height: 50px;
+        width: 50px;
+
+    }
+
+    .room .in:checked {
+        opacity: 1.0;
+    }
+
+    p {
+        font-size: 30px;
+        font-weight: bold;
+        color: rgb(253, 253, 253);
+        text-shadow: 5px 3px 5px black, 0 0 1em blue, 0 0 0.2em darkblue;
+
+    }
+
+    #status {
+        padding-left: 100px;
+        color: rgb(153, 255, 0);
+    }
+</style>
+<title id='a'>ESP8266 WebSocket</title>
+
+<body>
+
+    <div id="contai">
+
+        <div class="left"> </div>
+        <div class="head"></div>
+        <div class="right">
+            <div id='web' class=''>
+                <p class=''>Websocket status: </p>
+                <p id="status" style="font-weight: bold;"> disconnected </p>
+            </div>
+            <div class="control">
+                <div class='room'>
+                    <img id="esp" alt="none" src="image/esp.png" />
+                    <div class="info">
+                        <p>ESP8266 Status</p>
+                        <input class="in" type="checkbox" id="btn" name="btn" />
+
+                    </div>
+
+                </div>
+                <div class='room'>
+                    <img alt=" none" src="image/redled.png" />
+                    <div class="info">
+                        <p class="thep"> Phòng Khách</p>
+                        <input class="in" type="checkbox" id="led1" name="led1" disabled="true" />
+
+                    </div>
+                </div>
+                <div class='room'>
+                    <img alt="none" src="image/yellowled.png" />
+                    <div class="info">
+                        <p class="thep"> Phòng Ngủ</p>
+                        <input class="in" type="checkbox" id="led2" name="led2" disabled="true" />
+
+                    </div>
+                </div>
+                <div class='room'>
+                    <img alt="none" src="image/bluered.png" />
+                    <div class="info">
+                        <p class="thep"> Phòng Vệ Sinh</p>
+                        <input class="in" type="checkbox" id="led3" name="led3" disabled="true" />
+
+                    </div>
+                </div>
+                <div class='room'>
+                    <img alt="none" src="image/greenled.png" />
+                    <div class="info">
+                        <p class="thep">Kin:s</p>
+                        <input class="in" type="text" id="text" name="text" disabled="true" />
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <script type="text/javascript">
+        var button = document.getElementById('btn');
+        var led1 = document.getElementById('led1');
+        var led2 = document.getElementById('led2');
+        var led3 = document.getElementById('led3');
+        var text = document.getElementById('text');
+        var url = window.location.host; // hĂ m tráº£ vá» url cá»§a trang hiá»‡n táº¡i kĂ¨m theo port
+        var ws = new WebSocket('ws://' + url + '/ws'); // má»Ÿ 1 websocket vá»›i port 8000
+        console.log('connecting...')
+        ws.onopen = function () //khi websocket Ä‘Æ°á»£c má»Ÿ thĂ¬ hĂ m nĂ y sáº½ Ä‘Æ°á»£c thÆ°c hiá»‡n
+        {
+            document.getElementById('status').innerHTML = 'Connected';
+            led1.disabled = false; //khi websocket Ä‘Æ°á»£c má»Ÿ, má»›i cho phĂ©p
+            led2.disabled = false; //khi websocket Ä‘Æ°á»£c má»Ÿ, má»›i cho phĂ©p
+            led3.disabled = false; //khi websocket Ä‘Æ°á»£c má»Ÿ, má»›i cho phĂ©p
+            console.log('connected...')
+        };
+        ws.onmessage = function (evt) // sá»± kiá»‡n xáº£y ra khi client nháº­n dá»¯ liá»‡u tá»« server
+        {
+            console.log(evt.data)
+            if (evt.data == 'Led_khach_on') {
+                led1.checked = true;
+            } else if (evt.data == 'Led_khach_off') {
+                led1.checked = false;
+            } else if (evt.data == 'Led_ngu_off') {
+                led2.checked = false;
+            } else if (evt.data == 'Led_ngu_on') {
+                led2.checked = true;
+            } else if (evt.data == 'Led_vs_off') {
+                led3.checked = false;
+            } else if (evt.data == 'Led_vs_on') {
+                led3.checked = true;
+            };
+        }
+
+        ws.onclose = function () { // hĂ m nĂ y sáº½ Ä‘Æ°á»£c thá»±c hiá»‡n khi Ä‘Ă³ng websocket
+            led1.disabled = true;
+            led2.disabled = true;
+            led3.disabled = true;
+            document.getElementById('status').innerHTML = 'Connected';
+        };
+        led1.onchange = function () { // thá»±c hiá»‡n thay Ä‘á»•i báº­t/táº¯t led
+            var led_status1 = 'LED_phong_khach_tat';
+            if (led1.checked) {
+                led_status1 = 'LED_phong_khach_bat';
+            }
+            ws.send(led_status1)
+        };
+        led2.onchange = function () { // thá»±c hiá»‡n thay Ä‘á»•i báº­t/táº¯t led
+            var led_status2 = 'LED_phong_ngu_tat';
+            if (led2.checked) {
+                led_status2 = 'LED_phong_ngu_bat';
+            }
+            ws.send(led_status2)
+        };
+        led3.onchange = function () { // thá»±c hiá»‡n thay Ä‘á»•i báº­t/táº¯t led
+            var led_status3 = 'LED_phong_vs_tat';
+            if (led3.checked) {
+                led_status3 = 'LED_phong_vs_bat';
+            }
+            ws.send(led_status3)
+        };
+        $(document).ready(function () {
+            console.log("ss");
+            function imageClick() {
+
+
+            }
+            $(".room").click(function () {
+                console.log("hiii");
+                var a = $(this).find("input")[0].checked;
+                var b = $(this).find("input").attr('id');
+
+                console.log(a, b);
+                var c = document.getElementById(b);
+                if (c.disabled) {
+
+                }
+                else {
+                    a==true?$(this).css("opacity",0.8):$(this).css("opacity",1);
+
+                    $(this).find("input").prop('checked', !a);
+                }
+            });
+            
+
+        });
+
+
+
+
+    </script>
+</body>
+
+</html>
